@@ -1,28 +1,26 @@
 // src/hooks/usePokemonList.ts
 import { useState, useEffect } from 'react';
 
-interface PokemonBasicInfo {
+interface PokemonSimple {
   id: number;
   name: string;
-  types: string[];
 }
 
 const usePokemonList = () => {
-  const [pokemons, setPokemons] = useState<PokemonBasicInfo[]>([]);
+  const [pokemons, setPokemons] = useState<PokemonSimple[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchPokemonList = async () => {
-      const url = 'https://pokeapi.co/api/v2/pokemon/?limit=898';
+    const fetchPokemons = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(url);
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=151`);
         const data = await response.json();
-        const pokemonList = data.results.map((pokemon: any, index: number) => ({
+        const simplePokemons = data.results.map((pokemon: any, index: number) => ({
           id: index + 1,
-          name: pokemon.name,
-          types: [] // Placeholder, as types need a separate API call
+          name: pokemon.name
         }));
-        setPokemons(pokemonList);
+        setPokemons(simplePokemons);
       } catch (error) {
         console.error("Failed to fetch Pokémon list:", error);
       } finally {
@@ -30,10 +28,12 @@ const usePokemonList = () => {
       }
     };
 
-    fetchPokemonList();
+    fetchPokemons();
   }, []);
 
   return { pokemons, loading };
 };
 
 export default usePokemonList;
+
+
